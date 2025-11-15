@@ -10,6 +10,26 @@
         "external": false
       },
       "mode": "full"
+    },
+    {
+      "name": "NodeRegistry",
+      "path": "contracts/NodeRegistry.tact",
+      "output": "build\\NodeRegistry",
+      "options": {
+        "debug": true,
+        "external": false
+      },
+      "mode": "full"
+    },
+    {
+      "name": "SessionManager",
+      "path": "contracts/SessionManager.tact",
+      "output": "build\\SessionManager",
+      "options": {
+        "debug": true,
+        "external": false
+      },
+      "mode": "full"
     }
   ]
 }
