@@ -1,6 +1,6 @@
 import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { toNano } from '@ton/core';
-import { NodeRegistry } from '../build/NodeRegistry/tact_NodeRegistry';
+import { NodeRegistry } from '../build/NodeRegistry/NodeRegistry_NodeRegistry';
 import '@ton/test-utils';
 
 describe('NodeRegistry', () => {

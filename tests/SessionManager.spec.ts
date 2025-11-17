@@ -1,7 +1,7 @@
 import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { toNano, beginCell } from '@ton/core';
-import { SessionManager } from '../build/SessionManager/tact_SessionManager';
-import { NodeRegistry } from '../build/NodeRegistry/tact_NodeRegistry';
+import { SessionManager } from '../build/SessionManager/SessionManager_SessionManager';
+import { NodeRegistry } from '../build/NodeRegistry/NodeRegistry_NodeRegistry';
 import '@ton/test-utils';
 
 describe('SessionManager', () => {

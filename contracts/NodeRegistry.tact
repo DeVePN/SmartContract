@@ -37,9 +37,10 @@ message AddEarnings {
 contract NodeRegistry with Deployable {
     nextNodeId: Int as uint32 = 0;
     nodes: map<Int as uint32, NodeInfo>;
+    sessionManagerAddress: Address;
 
-    init() {
-        // Initialize with empty state
+    init(sessionManagerAddress: Address) {
+        self.sessionManagerAddress = sessionManagerAddress;
     }
 
     // Register a new VPN node
@@ -90,6 +91,7 @@ contract NodeRegistry with Deployable {
 
     // Add earnings to a node (called by SessionManager only)
     receive(msg: AddEarnings) {
+        require(sender() == self.sessionManagerAddress, "Only SessionManager");
         let node: NodeInfo = self.nodes.get(msg.nodeId)!!;
         node.totalEarnings = node.totalEarnings + msg.amount;
         self.nodes.set(msg.nodeId, node);

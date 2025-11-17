@@ -1,26 +1,18 @@
 import { toNano, Address } from '@ton/core';
-import { SessionManager } from '../build/SessionManager/tact_SessionManager';
+import { SessionManager } from '../build/SessionManager/SessionManager_SessionManager';
 import { NetworkProvider } from '@ton/blueprint';
-import * as readline from 'readline';
-
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
-function question(query: string): Promise<string> {
-    return new Promise(resolve => rl.question(query, resolve));
-}
 
 export async function run(provider: NetworkProvider) {
+    const ui = provider.ui();
+
     console.log('=== SessionManager Deployment ===\n');
 
     // Get NodeRegistry address from user
-    const nodeRegistryAddressStr = await question('Enter NodeRegistry contract address: ');
+    const nodeRegistryAddressStr = await ui.input('Enter NodeRegistry contract address: ');
     const nodeRegistryAddress = Address.parse(nodeRegistryAddressStr.trim());
 
     // Get backend public key from user
-    const backendPubKeyStr = await question('Enter backend public key (as hex string or decimal): ');
+    const backendPubKeyStr = await ui.input('Enter backend public key (as hex string or decimal): ');
     let backendPubKey: bigint;
 
     try {
@@ -33,11 +25,8 @@ export async function run(provider: NetworkProvider) {
         }
     } catch (e) {
         console.error('Invalid public key format');
-        rl.close();
         return;
     }
-
-    rl.close();
 
     console.log('\nDeploying SessionManager with:');
     console.log('- NodeRegistry:', nodeRegistryAddress.toString());
@@ -62,8 +51,8 @@ export async function run(provider: NetworkProvider) {
 
     console.log('\n=== Deployment Successful ===');
     console.log('SessionManager deployed at:', sessionManager.address);
-    console.log('Total sessions:', await sessionManager.getTotalSessions());
-    console.log('Stored backend pubkey:', await sessionManager.getBackendPubKey());
+    console.log('Total sessions:', await sessionManager.getGetTotalSessions());
+    console.log('Stored backend pubkey:', await sessionManager.getGetBackendPubKey());
 
     console.log('\n=== IMPORTANT ===');
     console.log('Save these addresses in your backend .env:');
