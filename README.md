@@ -1,8 +1,8 @@
-# DeVPN Smart Contracts 💎
+# &VPN Smart Contracts 💎
 
 **Tact smart contracts for the DeVPN protocol on TON Blockchain.**
 
-DeVPN uses a dual-contract architecture to manage decentralized VPN nodes and pay-as-you-go sessions.
+&VPN uses a dual-contract architecture to manage decentralized VPN nodes and pay-as-you-go sessions.
 
 ## 📜 Deployed Contracts (Testnet)
 
