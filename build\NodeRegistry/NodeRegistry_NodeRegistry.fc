@@ -1,0 +1,658 @@
+#pragma version =0.4.6;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+;; NodeRegistry_NodeRegistry.headers.fc
+;;
+;; Header files for NodeRegistry
+;; NOTE: declarations are sorted for optimal order
+;;
+
+;; __tact_context_get
+(int, slice, int, slice) __tact_context_get() inline;
+
+;; __tact_context_get_sender
+slice __tact_context_get_sender() inline;
+
+;; __tact_dict_get_uint_cell
+cell __tact_dict_get_uint_cell(cell d, int kl, int k) inline;
+
+;; __tact_dict_set_uint_cell
+(cell, ()) __tact_dict_set_uint_cell(cell d, int kl, int k, cell v) inline;
+
+;; $DeployOk$_store
+builder $DeployOk$_store(builder build_0, (int) v) inline;
+
+;; $DeployOk$_store_cell
+cell $DeployOk$_store_cell((int) v, builder b) inline;
+
+;; $NodeInfo$_store
+builder $NodeInfo$_store(builder build_0, (slice, int, int, int, int) v) inline;
+
+;; $NodeInfo$_store_cell
+cell $NodeInfo$_store_cell((slice, int, int, int, int) v, builder b) inline;
+
+;; $NodeInfo$_load
+(slice, ((slice, int, int, int, int))) $NodeInfo$_load(slice sc_0) inline;
+
+;; $NodeInfo$_as_optional
+tuple $NodeInfo$_as_optional((slice, int, int, int, int) v) inline;
+
+;; $NodeInfo$_load_opt
+tuple $NodeInfo$_load_opt(cell cl) inline;
+
+;; $NodeRegistry$_store
+builder $NodeRegistry$_store(builder build_0, (int, cell, slice) v) inline;
+
+;; $NodeRegistry$_load
+(slice, ((int, cell, slice))) $NodeRegistry$_load(slice sc_0) inline;
+
+;; $Context$_get_value
+_ $Context$_get_value((int, slice, int, slice) v) inline;
+
+;; $NodeInfo$_not_null
+((slice, int, int, int, int)) $NodeInfo$_not_null(tuple v) inline;
+
+;; $NodeInfo$_to_tuple
+tuple $NodeInfo$_to_tuple(((slice, int, int, int, int)) v) inline;
+
+;; $NodeInfo$_to_opt_tuple
+tuple $NodeInfo$_to_opt_tuple(tuple v) inline;
+
+;; $NodeInfo$_to_opt_external
+tuple $NodeInfo$_to_opt_external(tuple v) inline;
+
+;; $NodeRegistry$init$_load
+(slice, ((slice))) $NodeRegistry$init$_load(slice sc_0) inline;
+
+;; $NodeRegistry$_contract_init
+(int, cell, slice) $NodeRegistry$_contract_init(slice $sessionManagerAddress) impure inline;
+
+;; $NodeRegistry$_contract_load
+(int, cell, slice) $NodeRegistry$_contract_load() impure inline;
+
+;; $NodeRegistry$_contract_store
+() $NodeRegistry$_contract_store((int, cell, slice) v) impure inline;
+
+;; $NodeRegistry$_fun_getNode
+((int, cell, slice), tuple) $NodeRegistry$_fun_getNode((int, cell, slice) $self, int $nodeId) impure inline_ref;
+
+;; $NodeRegistry$_fun_getTotalNodes
+((int, cell, slice), int) $NodeRegistry$_fun_getTotalNodes((int, cell, slice) $self) impure inline_ref;
+
+;; $MessageParameters$_constructor_bounce_to_value_mode_body
+((int, cell, int, slice, int)) $MessageParameters$_constructor_bounce_to_value_mode_body(int $bounce, slice $to, int $value, int $mode, cell $body) inline;
+
+;; $NodeRegistry$_fun_notify
+((int, cell, slice), ()) $NodeRegistry$_fun_notify((int, cell, slice) $self, cell $body) impure inline;
+
+;; $NodeInfo$_constructor_owner_metadataHash_pricePerByte_totalEarnings_isActive
+((slice, int, int, int, int)) $NodeInfo$_constructor_owner_metadataHash_pricePerByte_totalEarnings_isActive(slice $owner, int $metadataHash, int $pricePerByte, int $totalEarnings, int $isActive) inline;
+
+;; $SendParameters$_constructor_to_value_mode_body
+((int, cell, cell, cell, int, slice, int)) $SendParameters$_constructor_to_value_mode_body(slice $to, int $value, int $mode, cell $body) inline;
+
+;; $DeployOk$_constructor_queryId
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline;
+
+
+;; NodeRegistry_NodeRegistry.stdlib.fc
+global (int, slice, int, slice) __tact_context;
+global slice __tact_context_sender;
+global cell __tact_child_contract_codes;
+global int __tact_randomized;
+
+(int, slice, int, slice) __tact_context_get() inline {
+    return __tact_context;
+}
+
+slice __tact_context_get_sender() inline {
+    return __tact_context_sender;
+}
+
+forall X0, X1, X2, X3, X4 -> tuple __tact_tuple_create_5((X0, X1, X2, X3, X4) v) asm """
+    5 TUPLE
+""";
+
+forall X0, X1, X2, X3, X4 -> (X0, X1, X2, X3, X4) __tact_tuple_destroy_5(tuple v) asm """
+    5 UNTUPLE
+""";
+
+cell __tact_dict_get_uint_cell(cell d, int kl, int k) inline {
+    var (r, ok) = udict_get_ref?(d, kl, k);
+    if (ok) {
+        return r;
+    } else {
+        return null();
+    }
+}
+
+(cell, ()) __tact_dict_set_uint_cell(cell d, int kl, int k, cell v) inline {
+    if (null?(v)) {
+        var (r, ok) = udict_delete?(d, kl, k);
+        return (r, ());
+    } else {
+        return (udict_set_ref(d, kl, k, v), ());
+    }
+}
+
+int $global_myBalance() impure asm """
+    BALANCE FIRST
+""";
+
+() $global_nativeReserve(int $amount, int $mode) impure asm """
+    RAWRESERVE
+""";
+
+() $global_message((int, cell, int, slice, int) $params) impure asm """
+    NEWC
+    b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+    1 STI               // store `bounce`
+    b{000} STSLICECONST // store bounced = false and src = addr_none
+    STSLICE             // store `to`
+    SWAP
+    STGRAMS             // store `value`
+    106 PUSHINT         // 1 + 4 + 4 + 64 + 32 + 1
+    STZEROES
+    // → Stack state
+    // s0: Builder
+    // s1: `body`
+    // s2: `mode`
+    STDICT
+    ENDC
+    SWAP
+    SENDRAWMSG
+""";
+
+() $global_send((int, cell, cell, cell, int, slice, int) $params) impure asm """
+    NEWC
+    b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+    1 STI               // store `bounce`
+    b{000} STSLICECONST // store bounced = false and src = addr_none
+    STSLICE             // store `to`
+    SWAP
+    STGRAMS             // store `value`
+    105 PUSHINT         // 1 + 4 + 4 + 64 + 32
+    STZEROES            // store currency_collection, ihr_fee, fwd_fee, created_lt and created_at
+    // → Stack state
+    // s0: Builder
+    // s1: `data`
+    // s2: `code`
+    // s3: `body`
+    // s4: `mode`
+
+    // Group 2: Placing the Builder after code and data, then checking those for nullability
+    s2 XCHG0
+    DUP2
+    ISNULL
+    SWAP
+    ISNULL
+    AND
+    // → Stack state
+    // s0: -1 (true) if `data` and `code` are both null, 0 (false) otherwise
+    // s1: `code`
+    // s2: `data`
+    // s3: Builder
+    // s4: `body`
+    // s5: `mode`
+
+    // Group 3: Left branch of the IFELSE, executed if s0 is -1 (true)
+    <{
+        DROP2 // drop `data` and `code`, since either of those is null
+        b{0} STSLICECONST
+    }> PUSHCONT
+
+    // Group 3: Right branch of the IFELSE, executed if s0 is 0 (false)
+    <{
+        // _ split_depth:(Maybe (## 5))
+        //   special:(Maybe TickTock)
+        //   code:(Maybe ^Cell)
+        //   data:(Maybe ^Cell)
+        //   library:(Maybe ^Cell)
+        // = StateInit;
+        ROT                // place message Builder on top
+        b{10} STSLICECONST // store Maybe = true, Either = false
+        // Start composing inlined StateInit
+        b{00} STSLICECONST // store split_depth and special first
+        STDICT             // store code
+        STDICT             // store data
+        b{0} STSLICECONST  // store library
+    }> PUSHCONT
+
+    // Group 3: IFELSE that does the branching shown above
+    IFELSE
+    // → Stack state
+    // s0: Builder
+    // s1: null or StateInit
+    // s2: `body`
+    // s3: `mode`
+
+    // Group 4: Finalizing the message
+    STDICT // store `body` as ref with an extra Maybe bit, since `body` might be null
+    ENDC
+    // → Stack state
+    // s0: Cell
+    // s1: `mode`
+
+    // Group 5: Sending the message, with `mode` on top
+    SWAP
+    SENDRAWMSG // https://github.com/tact-lang/tact/issues/1558
+""";
+
+((int, cell, slice), ()) $NodeRegistry$_fun_notify((int, cell, slice) $self, cell $body) impure inline {
+    var (($self'nextNodeId, $self'nodes, $self'sessionManagerAddress)) = $self;
+    slice $to = __tact_context_get_sender();
+    int $bounce = false;
+    if (false) {
+        int $balance = $global_myBalance();
+        int $balanceBeforeMessage = ($balance - $Context$_get_value(__tact_context_get()));
+        if (($balanceBeforeMessage < 0)) {
+            $global_nativeReserve(0, 0);
+            $global_message($MessageParameters$_constructor_bounce_to_value_mode_body($bounce, $to, 0, 130, $body));
+            return (($self'nextNodeId, $self'nodes, $self'sessionManagerAddress), ());
+        }
+    }
+    $global_message($MessageParameters$_constructor_bounce_to_value_mode_body($bounce, $to, 0, 66, $body));
+    return (($self'nextNodeId, $self'nodes, $self'sessionManagerAddress), ());
+}
+
+;; NodeRegistry_NodeRegistry.constants.fc
+;; Cell L4UQrGxo57i5vttPuYRgj1LW5hYNBe5ZnmeWMz+C8W0=
+cell __gen_cell_cell_2f8510ac6c68e7b8b9bedb4fb984608f52d6e6160d05ee599e6796333f82f16d() asm """
+    B{b5ee9c7241010101001700002a000000004e6f646520756e7265676973746572656434652017} B>boc PUSHREF
+""";
+
+;; Cell 2gHqBm1erkKRNEkUnPxsVK1ZmXgaM39S7abFx57ZOiY=
+cell __gen_cell_cell_da01ea066d5eae42913449149cfc6c54ad5999781a337f52eda6c5c79ed93a26() asm """
+    B{b5ee9c7241010101001800002c000000004561726e696e67732077697468647261776ecda7d940} B>boc PUSHREF
+""";
+
+;; NodeRegistry_NodeRegistry.storage.fc
+;;
+;; Type: Context
+;; TLB: _ bounceable:bool sender:address value:int257 raw:^slice = Context
+;;
+
+_ $Context$_get_value((int, slice, int, slice) v) inline {
+    var (v'bounceable, v'sender, v'value, v'raw) = v;
+    return v'value;
+}
+
+;;
+;; Type: SendParameters
+;; TLB: _ mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell value:int257 to:address bounce:bool = SendParameters
+;;
+
+((int, cell, cell, cell, int, slice, int)) $SendParameters$_constructor_to_value_mode_body(slice $to, int $value, int $mode, cell $body) inline {
+    return ($mode, $body, null(), null(), $value, $to, true);
+}
+
+;;
+;; Type: MessageParameters
+;; TLB: _ mode:int257 body:Maybe ^cell value:int257 to:address bounce:bool = MessageParameters
+;;
+
+((int, cell, int, slice, int)) $MessageParameters$_constructor_bounce_to_value_mode_body(int $bounce, slice $to, int $value, int $mode, cell $body) inline {
+    return ($mode, $body, $value, $to, $bounce);
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v, builder b) inline {
+    return $DeployOk$_store(b, v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline {
+    return ($queryId);
+}
+
+;;
+;; Type: NodeInfo
+;; TLB: _ owner:address metadataHash:uint256 pricePerByte:coins totalEarnings:coins isActive:bool = NodeInfo
+;;
+
+builder $NodeInfo$_store(builder build_0, (slice, int, int, int, int) v) inline {
+    var (v'owner, v'metadataHash, v'pricePerByte, v'totalEarnings, v'isActive) = v;
+    build_0 = build_0.store_slice(v'owner);
+    build_0 = build_0.store_uint(v'metadataHash, 256);
+    build_0 = build_0.store_varuint16(v'pricePerByte);
+    build_0 = build_0.store_varuint16(v'totalEarnings);
+    build_0 = build_0.store_int(v'isActive, 1);
+    return build_0;
+}
+
+cell $NodeInfo$_store_cell((slice, int, int, int, int) v, builder b) inline {
+    return $NodeInfo$_store(b, v).end_cell();
+}
+
+(slice, ((slice, int, int, int, int))) $NodeInfo$_load(slice sc_0) inline {
+    var v'owner = sc_0~load_msg_addr();
+    var v'metadataHash = sc_0~load_uint(256);
+    var v'pricePerByte = sc_0~load_varuint16();
+    var v'totalEarnings = sc_0~load_varuint16();
+    var v'isActive = sc_0~load_int(1);
+    return (sc_0, (v'owner, v'metadataHash, v'pricePerByte, v'totalEarnings, v'isActive));
+}
+
+tuple $NodeInfo$_as_optional((slice, int, int, int, int) v) inline {
+    var (v'owner, v'metadataHash, v'pricePerByte, v'totalEarnings, v'isActive) = v;
+    return __tact_tuple_create_5(v'owner, v'metadataHash, v'pricePerByte, v'totalEarnings, v'isActive);
+}
+
+tuple $NodeInfo$_load_opt(cell cl) inline {
+    if (null?(cl)) {
+        return null();
+    }
+    var sc = cl.begin_parse();
+    return $NodeInfo$_as_optional(sc~$NodeInfo$_load());
+}
+
+((slice, int, int, int, int)) $NodeInfo$_not_null(tuple v) inline {
+    throw_if(128, null?(v));
+    var (slice vvv'owner, int vvv'metadataHash, int vvv'pricePerByte, int vvv'totalEarnings, int vvv'isActive) = __tact_tuple_destroy_5(v);
+    return (vvv'owner, vvv'metadataHash, vvv'pricePerByte, vvv'totalEarnings, vvv'isActive);
+}
+
+tuple $NodeInfo$_to_tuple(((slice, int, int, int, int)) v) inline {
+    var (v'owner, v'metadataHash, v'pricePerByte, v'totalEarnings, v'isActive) = v;
+    return __tact_tuple_create_5(v'owner, v'metadataHash, v'pricePerByte, v'totalEarnings, v'isActive);
+}
+
+tuple $NodeInfo$_to_opt_tuple(tuple v) inline {
+    if (null?(v)) { return null(); } 
+    return $NodeInfo$_to_tuple($NodeInfo$_not_null(v)); 
+}
+
+tuple $NodeInfo$_to_opt_external(tuple v) inline {
+    var loaded = $NodeInfo$_to_opt_tuple(v);
+    if (null?(loaded)) {
+        return null();
+    } else {
+        return (loaded);
+    }
+}
+
+((slice, int, int, int, int)) $NodeInfo$_constructor_owner_metadataHash_pricePerByte_totalEarnings_isActive(slice $owner, int $metadataHash, int $pricePerByte, int $totalEarnings, int $isActive) inline {
+    return ($owner, $metadataHash, $pricePerByte, $totalEarnings, $isActive);
+}
+
+;;
+;; Type: NodeRegistry
+;; TLB: _ nextNodeId:uint32 nodes:dict<uint32, ^NodeInfo{owner:address,metadataHash:uint256,pricePerByte:coins,totalEarnings:coins,isActive:bool}> sessionManagerAddress:address = NodeRegistry
+;;
+
+builder $NodeRegistry$_store(builder build_0, (int, cell, slice) v) inline {
+    var (v'nextNodeId, v'nodes, v'sessionManagerAddress) = v;
+    build_0 = build_0.store_uint(v'nextNodeId, 32);
+    build_0 = build_0.store_dict(v'nodes);
+    build_0 = build_0.store_slice(v'sessionManagerAddress);
+    return build_0;
+}
+
+(slice, ((int, cell, slice))) $NodeRegistry$_load(slice sc_0) inline {
+    var v'nextNodeId = sc_0~load_uint(32);
+    var v'nodes = sc_0~load_dict();
+    var v'sessionManagerAddress = sc_0~load_msg_addr();
+    return (sc_0, (v'nextNodeId, v'nodes, v'sessionManagerAddress));
+}
+
+(slice, ((slice))) $NodeRegistry$init$_load(slice sc_0) inline {
+    var v'sessionManagerAddress = sc_0~load_msg_addr();
+    return (sc_0, (v'sessionManagerAddress));
+}
+
+(int, cell, slice) $NodeRegistry$_contract_load() impure inline {
+    slice $sc = get_data().begin_parse();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$NodeRegistry$_load();
+    }
+    else {
+        (slice $sessionManagerAddress) = $sc~$NodeRegistry$init$_load();
+        $sc.end_parse();
+        return $NodeRegistry$_contract_init($sessionManagerAddress);
+    }
+}
+
+() $NodeRegistry$_contract_store((int, cell, slice) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_int(true, 1);
+    b = $NodeRegistry$_store(b, v);
+    set_data(b.end_cell());
+}
+
+;;
+;; Contract NodeRegistry functions
+;;
+
+(int, cell, slice) $NodeRegistry$_contract_init(slice $sessionManagerAddress) impure inline {
+    var (($self'nextNodeId, $self'nodes, $self'sessionManagerAddress)) = (0, null(), null());
+    $self'sessionManagerAddress = $sessionManagerAddress;
+    return ($self'nextNodeId, $self'nodes, $self'sessionManagerAddress);
+}
+
+((int, cell, slice), tuple) $NodeRegistry$_fun_getNode((int, cell, slice) $self, int $nodeId) impure inline_ref {
+    var (($self'nextNodeId, $self'nodes, $self'sessionManagerAddress)) = $self;
+    var $fresh$ret_2 = $NodeInfo$_load_opt(__tact_dict_get_uint_cell($self'nodes, 32, $nodeId));
+    return (($self'nextNodeId, $self'nodes, $self'sessionManagerAddress), $fresh$ret_2);
+}
+
+((int, cell, slice), int) $NodeRegistry$_fun_getTotalNodes((int, cell, slice) $self) impure inline_ref {
+    var (($self'nextNodeId, $self'nodes, $self'sessionManagerAddress)) = $self;
+    var $fresh$ret_3 = $self'nextNodeId;
+    return (($self'nextNodeId, $self'nodes, $self'sessionManagerAddress), $fresh$ret_3);
+}
+
+;;
+;; Get methods of a Contract NodeRegistry
+;;
+
+_ %getNode(int $nodeId) method_id(107190) {
+    int $nodeId = $nodeId;
+    var self = $NodeRegistry$_contract_load();
+    var res = self~$NodeRegistry$_fun_getNode($nodeId);
+    return $NodeInfo$_to_opt_external(res);
+}
+
+_ %getTotalNodes() method_id(102257) {
+    var self = $NodeRegistry$_contract_load();
+    var res = self~$NodeRegistry$_fun_getTotalNodes();
+    return res;
+}
+
+;;
+;; Routing of a Contract NodeRegistry
+;;
+
+;; message opcode reader utility: only binary receivers
+;; Returns 32 bit message opcode, otherwise throws the "Invalid incoming message" exit code
+(slice, int) ~load_opcode_internal(slice s) asm( -> 1 0) "32 LDUQ 130 THROWIFNOT";
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    cs~skip_bits(2);
+    var msg_bounceable = cs~load_int(1);
+    var msg_bounced = cs~load_int(1);
+    slice msg_sender_addr = cs~load_msg_addr();
+    __tact_context = (msg_bounceable, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var ($self'nextNodeId, $self'nodes, $self'sessionManagerAddress) = $NodeRegistry$_contract_load();
+    
+    ;; Handle bounced messages
+    if (msg_bounced) { return (); }
+    var op = in_msg~load_opcode_internal();
+    ;; Receive RegisterNode message
+    if (op == 2778677361) {
+        var $msg'metadataHash = in_msg~load_uint(256);
+        var $msg'pricePerByte = in_msg~load_varuint16();
+        int $nodeId = $self'nextNodeId;
+        var ($nodeInfo'owner, $nodeInfo'metadataHash, $nodeInfo'pricePerByte, $nodeInfo'totalEarnings, $nodeInfo'isActive) = $NodeInfo$_constructor_owner_metadataHash_pricePerByte_totalEarnings_isActive(__tact_context_get_sender(), $msg'metadataHash, $msg'pricePerByte, 0, true);
+        $self'nodes~__tact_dict_set_uint_cell(32, $nodeId, $NodeInfo$_store_cell(($nodeInfo'owner, $nodeInfo'metadataHash, $nodeInfo'pricePerByte, $nodeInfo'totalEarnings, $nodeInfo'isActive), begin_cell()));
+        $self'nextNodeId = ($self'nextNodeId + 1);
+        $NodeRegistry$_contract_store(($self'nextNodeId, $self'nodes, $self'sessionManagerAddress));
+        return ();
+    }
+    
+    ;; Receive UnregisterNode message
+    if (op == 1994276715) {
+        var $msg'nodeId = in_msg~load_uint(32);
+        var ($node'owner, $node'metadataHash, $node'pricePerByte, $node'totalEarnings, $node'isActive) = $NodeInfo$_not_null($NodeInfo$_load_opt(__tact_dict_get_uint_cell($self'nodes, 32, $msg'nodeId)));
+        throw_unless(36976, ( equal_slices_bits($node'owner, __tact_context_get_sender()) ));
+        $node'isActive = false;
+        $self'nodes~__tact_dict_set_uint_cell(32, $msg'nodeId, $NodeInfo$_store_cell(($node'owner, $node'metadataHash, $node'pricePerByte, $node'totalEarnings, $node'isActive), begin_cell()));
+        if (($node'totalEarnings > 0)) {
+            $global_send($SendParameters$_constructor_to_value_mode_body($node'owner, $node'totalEarnings, 2, __gen_cell_cell_2f8510ac6c68e7b8b9bedb4fb984608f52d6e6160d05ee599e6796333f82f16d()));
+        }
+        $NodeRegistry$_contract_store(($self'nextNodeId, $self'nodes, $self'sessionManagerAddress));
+        return ();
+    }
+    
+    ;; Receive UpdateMetadata message
+    if (op == 1361910744) {
+        var $msg'nodeId = in_msg~load_uint(32);
+        var $msg'metadataHash = in_msg~load_uint(256);
+        var $msg'pricePerByte = in_msg~load_varuint16();
+        var ($node'owner, $node'metadataHash, $node'pricePerByte, $node'totalEarnings, $node'isActive) = $NodeInfo$_not_null($NodeInfo$_load_opt(__tact_dict_get_uint_cell($self'nodes, 32, $msg'nodeId)));
+        throw_unless(36976, ( equal_slices_bits($node'owner, __tact_context_get_sender()) ));
+        $node'metadataHash = $msg'metadataHash;
+        $node'pricePerByte = $msg'pricePerByte;
+        $self'nodes~__tact_dict_set_uint_cell(32, $msg'nodeId, $NodeInfo$_store_cell(($node'owner, $node'metadataHash, $node'pricePerByte, $node'totalEarnings, $node'isActive), begin_cell()));
+        $NodeRegistry$_contract_store(($self'nextNodeId, $self'nodes, $self'sessionManagerAddress));
+        return ();
+    }
+    
+    ;; Receive AddEarnings message
+    if (op == 290322301) {
+        var $msg'nodeId = in_msg~load_uint(32);
+        var $msg'amount = in_msg~load_varuint16();
+        throw_unless(10227, ( equal_slices_bits(__tact_context_get_sender(), $self'sessionManagerAddress) ));
+        var ($node'owner, $node'metadataHash, $node'pricePerByte, $node'totalEarnings, $node'isActive) = $NodeInfo$_not_null($NodeInfo$_load_opt(__tact_dict_get_uint_cell($self'nodes, 32, $msg'nodeId)));
+        $node'totalEarnings = ($node'totalEarnings + $msg'amount);
+        $self'nodes~__tact_dict_set_uint_cell(32, $msg'nodeId, $NodeInfo$_store_cell(($node'owner, $node'metadataHash, $node'pricePerByte, $node'totalEarnings, $node'isActive), begin_cell()));
+        $NodeRegistry$_contract_store(($self'nextNodeId, $self'nodes, $self'sessionManagerAddress));
+        return ();
+    }
+    
+    ;; Receive WithdrawEarnings message
+    if (op == 1576842797) {
+        var $msg'nodeId = in_msg~load_uint(32);
+        var ($node'owner, $node'metadataHash, $node'pricePerByte, $node'totalEarnings, $node'isActive) = $NodeInfo$_not_null($NodeInfo$_load_opt(__tact_dict_get_uint_cell($self'nodes, 32, $msg'nodeId)));
+        throw_unless(36976, ( equal_slices_bits($node'owner, __tact_context_get_sender()) ));
+        throw_unless(13171, ($node'totalEarnings > 0));
+        int $amount = $node'totalEarnings;
+        $node'totalEarnings = 0;
+        $self'nodes~__tact_dict_set_uint_cell(32, $msg'nodeId, $NodeInfo$_store_cell(($node'owner, $node'metadataHash, $node'pricePerByte, $node'totalEarnings, $node'isActive), begin_cell()));
+        $global_send($SendParameters$_constructor_to_value_mode_body($node'owner, $amount, 2, __gen_cell_cell_da01ea066d5eae42913449149cfc6c54ad5999781a337f52eda6c5c79ed93a26()));
+        $NodeRegistry$_contract_store(($self'nextNodeId, $self'nodes, $self'sessionManagerAddress));
+        return ();
+    }
+    
+    ;; Receive Deploy message
+    if (op == 0x946a98b6) {
+        var $deploy'queryId = in_msg~load_uint(64);
+        ($self'nextNodeId, $self'nodes, $self'sessionManagerAddress)~$NodeRegistry$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId), begin_cell()));
+        $NodeRegistry$_contract_store(($self'nextNodeId, $self'nodes, $self'sessionManagerAddress));
+        return ();
+    }
+    
+    ;; Throw if not handled
+    throw(130);
+}
+
+
+() __tact_selector_hack_asm() impure asm """
+@atend @ 1 {
+        execute current@ context@ current!
+        {
+            // The core idea of this function is to save gas by avoiding unnecessary dict jump, when recv_internal/recv_external is called
+            // We want to extract recv_internal/recv_external from the dict and select needed function
+            // not by jumping to the needed function by it's index, but by using usual IF statements.
+
+            }END> b> // Close previous builder, now we have a cell of previous code on top of the stack
+
+            <{ // Start of the new code builder
+                SETCP0
+                // Swap the new code builder with the previous code, now we have previous code on top of the stack
+                swap
+                // Transform cell to slice and load first ref from the previous code, now we have the dict on top of the stack
+                <s ref@
+
+                // Extract the recv_internal from the dict
+                dup 0 swap @procdictkeylen idict@ { "internal shortcut error" abort } ifnot
+                swap
+
+                // Delete the recv_internal from the dict
+                0 swap @procdictkeylen idict- drop
+                // Delete the recv_external from the dict (it's okay if it's not there)
+                -1 swap @procdictkeylen idict- drop
+                // Delete the __tact_selector_hack from the dict
+                65535 swap @procdictkeylen idict- drop
+
+                // Bring the code builder from the bottom of the stack
+                // because if recv_external extraction is optional, and the number of elements on the stack is not fixed
+                depth 1- roll
+                // Swap with the dict from which we extracted recv_internal and (maybe) recv_external
+                swap
+
+                // Check if the dict is empty
+                dup null?
+                // Store a copy of this flag in the bottom of the stack
+                dup depth 1- -roll
+                {
+                    // If the dict is empty, just drop it (it will be null if it's empty)
+                    drop
+                }
+                {
+                    // If the dict is not empty, prepare continuation to be stored in c3
+                    <{
+                        // Save this dict as first ref in this continuation, it will be pushed in runtime by DICTPUSHCONST
+                        swap @procdictkeylen DICTPUSHCONST
+                        // Jump to the needed function by it's index
+                        DICTIGETJMPZ
+                        // If such key is not found, throw 11 along with the key as an argument
+                        11 THROWARG
+                    }> PUSHCONT
+                    // Store the continuation in c3
+                    c3 POP
+                } cond
+
+                // Function id is on top of the (runtime) stack
+                DUP IFNOTJMP:<{
+                    // place recv_internal here
+                    DROP swap @addop
+                }>
+
+                // Bring back the flag, indicating if the dict is empty or not from the bottom of the stack
+                depth 1- roll
+                {
+                    // If the dict is empty, throw 11
+                    11 THROWARG
+                }
+                {
+                    // If the dict is not empty, jump to continuation from c3
+                    c3 PUSH JMPX
+                } cond
+            }> b>
+        } : }END>c
+        current@ context! current!
+    } does @atend !
+""";
+
+() __tact_selector_hack() method_id(65535) {
+    return __tact_selector_hack_asm();
+}
